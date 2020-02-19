@@ -19,7 +19,7 @@ module.exports = function(server) {
      * Rotas protegidas por Token JWT
      */
     const protectedApi = express.Router()
-    server.use('/api', protectedApi)
+    server.use('/', protectedApi)
 
 	protectedApi.use(auth)
 
