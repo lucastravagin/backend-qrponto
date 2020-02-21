@@ -30,7 +30,7 @@ module.exports = function(server) {
 
     const colaboradorService = require('../api/colaborador/colaborador.service')
     colaboradorService.register(protectedApi, '/colaboradores')
-
+    protectedApi.get('/colaborador-empresa/:id', AuthService.getColaborarByEmpresa)
 
     const contadorService = require('../api/contador/contador.service')
     contadorService.register(protectedApi, '/contadores')

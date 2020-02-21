@@ -2,6 +2,7 @@ const _ = require('lodash')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const Empresa = require('../empresa/empresa.model')
+const Colaborador = require('../colaborador/colaborador.model')
 const env = require('../../.env')
 
 const emailRegex = /\S+@\S+\.\S+/
@@ -24,8 +25,8 @@ const login = (req, res, next) => {
             const token = jwt.sign(empresa.toJSON(), env.authSecret, {
                 expiresIn: "1 day"
             })
-            const { nome_fantasia, email } = empresa
-            res.json({ nome_fantasia, email, token })
+            const { nome_fantasia, email, _id } = empresa
+            res.json({ nome_fantasia, email, _id, token })
         } else {
             return res.status(400).send({errors: ['Usuário/Senha inválidos']})
         }
@@ -81,4 +82,15 @@ const signup = (req, res, next) => {
     })
 }
 
-module.exports = { login, signup, validateToken }
+const getColaborarByEmpresa = (req, res, next) => {
+    if(req.params.id) {
+        Colaborador.findByEmpresa(req.params.id)
+            .then(colaborador => colaborador ? colaborador : [])
+            .then(document => {
+                res.json(document)
+            })
+            .catch(next)
+    }
+}
+
+module.exports = { login, signup, validateToken, getColaborarByEmpresa }

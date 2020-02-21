@@ -32,4 +32,7 @@ Colaborador.route('count', function(req, res, next) {
     })
 })
 
+
+
+
 module.exports = Colaborador
