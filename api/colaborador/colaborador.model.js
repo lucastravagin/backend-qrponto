@@ -2,6 +2,11 @@ const restful = require('node-restful')
 const mongoose = restful.mongoose
 
 
+const horasTrabalhadasSchema = new mongoose.Schema({
+    date: {type: Date},
+    pontos: {type: Array}
+})
+
 const colaboradorSchema = new mongoose.Schema({
     nome: { type: String, required: true },
     cpf: { type: String, required: true },
@@ -18,6 +23,12 @@ const colaboradorSchema = new mongoose.Schema({
         required: true
     }, 
     pin: { type: String },
+    horas_trabalhadas: {
+      type: [horasTrabalhadasSchema],
+      required: false,
+      select: false,
+      default: []
+    }
 })
 
 colaboradorSchema.statics.findByEmpresa = function (empresa, projection) {

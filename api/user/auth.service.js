@@ -14,6 +14,26 @@ const sendErrorsFromDB = (res, dbErrors) => {
     return res.status(400).json({errors})
 }
 
+const loginColaborador = (req, res, next) => {
+    const email = req.body.email || ''
+    const pin = req.body.pin || ''
+    console.log(req.body.email)
+    Colaborador.findOne({email}, (err, colaborador) => {
+        
+        if(err) {
+            return sendErrorsFromDB(res, err)
+        } else if (colaborador && (pin === colaborador.pin)) {
+            const token = jwt.sign(colaborador.toJSON(), env.authSecret, {
+                expiresIn: "1 day"
+            })
+            const { nome, email, _id } = colaborador
+            res.json({ nome, email, _id, token })
+        } else {
+            return res.status(400).send({errors: ['Usuário/Pin inválidos']})
+        }
+    })
+}
+
 const login = (req, res, next) => {
     const email = req.body.email || ''
     const password = req.body.password || ''
@@ -93,4 +113,4 @@ const getColaborarByEmpresa = (req, res, next) => {
     }
 }
 
-module.exports = { login, signup, validateToken, getColaborarByEmpresa }
+module.exports = { login, signup, validateToken, getColaborarByEmpresa, loginColaborador }
