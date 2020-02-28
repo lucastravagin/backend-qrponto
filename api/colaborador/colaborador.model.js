@@ -3,7 +3,7 @@ const mongoose = restful.mongoose
 
 
 const horasTrabalhadasSchema = new mongoose.Schema({
-    date: {type: Date},
+    date: {type: String},
     pontos: {type: Array}
 })
 
@@ -26,8 +26,7 @@ const colaboradorSchema = new mongoose.Schema({
     horas_trabalhadas: {
       type: [horasTrabalhadasSchema],
       required: false,
-      select: false,
-      default: []
+      select: true,
     }
 })
 

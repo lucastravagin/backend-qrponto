@@ -31,6 +31,9 @@ module.exports = function(server) {
 
     const colaboradorService = require('../api/colaborador/colaborador.service')
     colaboradorService.register(protectedApi, '/colaboradores')
+    protectedApi.get('/colaboradores/:id/horas_trabalhadas', AuthService.getHorasTrabalhadas)
+    protectedApi.put('/colaboradores/:id/horas_trabalhadas', AuthService.putHorasTrabalhadas)
+    protectedApi.post('/colaboradores/:id/horas_trabalhadas', AuthService.postHorasTrabalhadas)
     protectedApi.get('/colaborador-empresa/:id', AuthService.getColaborarByEmpresa)
 
     const contadorService = require('../api/contador/contador.service')
