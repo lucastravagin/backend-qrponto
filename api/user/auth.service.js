@@ -115,6 +115,27 @@ const getColaborarByEmpresa = (req, res, next) => {
     }
 }
 
+function parse(horario) {
+     
+    if (typeof horario === "undefined") {
+        console.log('entrou aqui')
+        horario = '00:00'
+    }
+    let [hora, minuto] = horario.split(':').map(v => parseInt(v));
+    if (!minuto) { // para o caso de não ter os minutos
+        minuto = 0;
+    }
+    return minuto + (hora * 60);
+}
+
+function duracao(entrada1, saida1, entrada2, saida2) {
+    return (parse(saida1) - parse(entrada1)) + (parse(saida2) - parse(entrada2));
+}
+
+let jornadaNormal = 478;
+let diff = 0
+let horas = 0
+let minutos = 0
 const getHorasTrabalhadas = (req, res, next) => {
     if (req.params.id) {
         Colaborador.findById(req.params.id, '+horas_trabalhadas')
@@ -122,6 +143,22 @@ const getHorasTrabalhadas = (req, res, next) => {
                 if (!colaborador) {
                     return res.status(404).send({ errors: 'Colaborador não encontrado' })
                 } else {
+                    for(let i = 0; i < colaborador.horas_trabalhadas.length; i++) {
+                        colaborador.horas_trabalhadas[i].duracao = 
+                        duracao(
+                            colaborador.horas_trabalhadas[i].pontos[0],
+                            colaborador.horas_trabalhadas[i].pontos[1],
+                            colaborador.horas_trabalhadas[i].pontos[2],
+                            colaborador.horas_trabalhadas[i].pontos[3]
+                        )
+                        diff = Math.abs(colaborador.horas_trabalhadas[i].duracao - jornadaNormal)
+                        if(diff != 0) {
+                             horas = Math.floor(diff / 60);
+                             minutos = diff - (horas * 60);
+                             colaborador.horas_trabalhadas[i].hora_extra = 
+                             `${horas} horas e ${minutos} minutos a ${colaborador.horas_trabalhadas[i].duracao > jornadaNormal ? 'mais' : 'menos'}`
+                        }
+                    }
                     res.json(colaborador.horas_trabalhadas)
                     return next()
                 }
